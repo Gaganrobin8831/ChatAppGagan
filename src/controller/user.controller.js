@@ -35,7 +35,7 @@ async function handleRegister(req, res) {
         password: hashPassword,
         countryCode,
         contactNumber,
-        profileImage: req.file ? `/uploads/${req.file.filename}` : null,
+        
       });
   
       await userData.save();
