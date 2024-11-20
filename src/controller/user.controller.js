@@ -2,7 +2,7 @@ const User = require('../models/user.models');
 const argon2 = require('argon2');
 const ResponseUtil = require('../utility/response.utility');
 const { createToken } = require('../middleware/valdiate.middleware');
-
+const upload = require('../utility/multer.utility');
 async function handleRegister(req, res) {
     const { name, email, password, countryCode, contactNumber } = req.body;
 
@@ -35,6 +35,7 @@ async function handleRegister(req, res) {
             password: hashPassword,
             countryCode,
             contactNumber,
+            profilePhoto: req.file ? `/uploads/${req.file.filename}`:null
         });
         await userData.save();
 

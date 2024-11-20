@@ -30,6 +30,9 @@ const userSchema = new Schema({
     token:{
         type:String,
         default:null
+    },
+    profileImage:{
+        type:String,
     }
 
 },{timestamps:true})
