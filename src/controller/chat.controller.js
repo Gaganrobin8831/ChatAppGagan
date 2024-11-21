@@ -18,7 +18,7 @@ async function handleGetChatAdmin(req, res) {
         if (!chatHistory.length) {
             return new ResponseUtil({
                 success: false,
-                message: 'User Have not Chat with Admin add Another User ID',
+                message: 'User have not chat with admin provide another user ID',
                 data: [],
                 statusCode: 200
             }, res)
