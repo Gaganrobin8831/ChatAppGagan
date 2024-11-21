@@ -81,8 +81,6 @@ io.on('connection', (socket) => {
 
 
     socket.on('chatMessage', async (message, adminId, userId) => {
-        // console.log("Message from Client",{message},{adminId},{userId})
-
         if (!message || typeof message !== 'string' || message.trim() === '') {
             return socket.emit('error', { message: 'Message must be a non-empty string.' });
         }
@@ -100,16 +98,9 @@ io.on('connection', (socket) => {
             });
 
             await newMessage.save();
-            // console.log('Emitting message to room:', {
-            //     id: newMessage._id,
-            //     content: newMessage.content,
-            //     from: newMessage.from,
-            //     to: newMessage.to,
-            //     timestamp: newMessage.timestamp,
-            // });
-            
 
-            io.to(room).emit('receiveMessage', {
+            
+            console.log('Emitting message to room:', room, {
                 id: newMessage._id,
                 content: newMessage.content,
                 from: newMessage.from,
@@ -117,7 +108,14 @@ io.on('connection', (socket) => {
                 timestamp: newMessage.timestamp,
             });
 
-            console.log(`Message sent in room ${room}:`, message);
+            socket.broadcast.to(room).emit('receiveMessage', {
+                id: newMessage._id,
+                content: newMessage.content,
+                from: newMessage.from,
+                to: newMessage.to,
+                timestamp: newMessage.timestamp,
+            });
+
         } catch (error) {
             console.error('Error saving message:', error);
             if (error.name === 'ValidationError') {
@@ -127,6 +125,7 @@ io.on('connection', (socket) => {
             }
         }
     });
+
 
 
     socket.on('leaveRoom', (room) => {
