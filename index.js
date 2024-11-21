@@ -108,7 +108,7 @@ io.on('connection', (socket) => {
                 timestamp: newMessage.timestamp,
             });
 
-            socket.broadcast.to(room).emit('receiveMessage', {
+            io.to(room).emit('receiveMessage', {
                 id: newMessage._id,
                 content: newMessage.content,
                 from: newMessage.from,
