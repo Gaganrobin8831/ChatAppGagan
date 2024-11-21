@@ -1,7 +1,6 @@
 const express = require('express')
 const { handleRegister, handleLogin, handleAdminDetailEdit, handleLogout, handleFullDetailOfAdmin } = require('../controller/admin.controller')
 const { validateRegister, validateLogin } = require('../validater/admin.validater')
-
 const { checkAuth } = require('../middleware/auth.middleware')
 
 const adminRouter = express.Router()

@@ -29,6 +29,7 @@ Before you begin, ensure you have the following installed:
 10. validator (For check email is valid or in valid format)
 11. dotenv (For Environment variables)
 12. compression (For Increase read data speed)
+
 ```
 ## Installation
 Follow these steps to set up and run the project locally:
