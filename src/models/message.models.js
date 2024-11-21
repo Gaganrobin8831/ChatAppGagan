@@ -3,17 +3,15 @@ const mongoose = require('mongoose');
 const MessageSchema = new mongoose.Schema(
     {
         room: {
-            type: String, // Room ID, usually `admin_id + user_id`
+            type: String, 
             required: true,
         },
-        from: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'User', // Reference to User model
+        from: {       
+            type: mongoose.Schema.Types.Mixed, 
             required: true,
         },
         to: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'User', // Reference to User model
+            type: mongoose.Schema.Types.Mixed, 
             required: true,
         },
         content: {
@@ -27,5 +25,7 @@ const MessageSchema = new mongoose.Schema(
     },
     { timestamps: true }
 );
+
 MessageSchema.index({ room: 1 });
+
 module.exports = mongoose.model('Message', MessageSchema);

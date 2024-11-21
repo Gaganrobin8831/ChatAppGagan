@@ -1,27 +1,49 @@
-const User = require("../models/user.models")
-const { validateToken } = require("./valdiate.middleware")
+const admin = require("../models/admin.models")
+const ResponseUtil = require("../utility/response.utility");
+const { validateToken } = require("./valdiate.middleware");
+
 
 
 async function checkAuth(req, res, next) {
     const token = req.headers.authorization?.split(' ')[1]
-
+    
     if (!token) {
-        return res.status(401).json({ message: 'Unauthorized' })
+        return new ResponseUtil({
+            success: false,
+            message: 'Unauthorized',
+            data: null,
+            statusCode: 401,
+        }, res);
     }
 
 
     try {
-        const userPayload = validateToken(token)
-        req.user = userPayload
-        const { _id } = req.user
-        const user = await User.findById(_id);
+        const adminPayload = validateToken(token)
 
-        if (user.token === null) {
-            return errorResponse(res, "error", "User not found", 404);
+        req.user = adminPayload
+        const { id } = req.user
+        
+        const adminData = await admin.findById(id);
+
+        if (adminData.token === null) {
+           
+            return new ResponseUtil({
+                success: false,
+                message: 'Unauthorized',
+                data: null,
+                statusCode: 401,
+            }, res);
         }
         next()
     } catch (error) {
-        return res.status(500).json({ message: 'Sonething Wrong' })
+       
+        return new ResponseUtil({
+            success: false,
+            message: 'Sonething Wrong',
+            data: null,
+            statusCode: 500,
+            errors:error || error.message
+        }, res);
     }
 
 

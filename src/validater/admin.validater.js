@@ -36,7 +36,7 @@ const validateLogin = (req, res, next) => {
 
 const validateRegister = (req, res, next) => {
     const { name, email, password, countryCode, contactNumber } = req.body;
-
+    // console.log( { name, email, password, countryCode, contactNumber })
     const requiredFields = { name, email, password, countryCode, contactNumber };
 
    

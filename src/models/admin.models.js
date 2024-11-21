@@ -2,7 +2,7 @@ const mongoose = require('mongoose')
 
 const { Schema } = mongoose
 
-const userSchema = new Schema({
+const adminSchema = new Schema({
     name: {
         type: String,
         required: true
@@ -24,8 +24,7 @@ const userSchema = new Schema({
       },
     role: {
         type: String,
-        enum: ['admin', 'user'],
-        default: 'user'
+        default: 'admin'
     },
     token:{
         type:String,
@@ -34,7 +33,7 @@ const userSchema = new Schema({
 
 
 },{timestamps:true})
-userSchema.index({ email: 1 });
-const User = mongoose.model("User",userSchema)
+adminSchema.index({ email: 1 });
+const admin = mongoose.model("admin",adminSchema)
 
-module.exports = User
+module.exports = admin

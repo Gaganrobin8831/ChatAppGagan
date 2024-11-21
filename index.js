@@ -4,10 +4,15 @@ const compression = require('compression');
 const { createServer } = require('http'); 
 const { Server } = require('socket.io'); 
 const { connectDB } = require('./src/DB/database.DB');
-const { userRouter } = require('./src/routes/user.routes');
+const { adminRouter } = require('./src/routes/admin.routes');
 const Message = require('./src/models/message.models'); 
-
+const { chatRouter } = require('./src/routes/chat.routes');
+const swaggerUi = require('swagger-ui-express')
+const yaml = require('yamljs')
+const swaggerDocument = yaml.load('./swagger.yaml')
 const app = express();
+
+app.use('/api-docs',swaggerUi.serve,swaggerUi.setup(swaggerDocument))
 const httpServer = createServer(app); 
 const io = new Server(httpServer, {
     cors: {
@@ -25,10 +30,12 @@ app.use(
 
 const port = process.env.PORT || 3000; 
 
+app.use(express.static('public'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.use('/api', userRouter);
+app.use('/api', adminRouter);
+app.use('/api', chatRouter);
 
 // Connect to MongoDB
 connectDB()
@@ -47,9 +54,9 @@ function generateRoomId(adminId, userId) {
 
 io.on('connection', (socket) => {
     console.log('A user connected:', socket.id);
-
+    socket.emit('firstMessage',"Hello How Can I Help You")
   
-    socket.on('joinRoom', async ({ adminId, userId }) => {
+    socket.on('joinRoom', async (adminId, userId) => {
         if (!adminId || !userId) {
             return socket.emit('error', { message: 'Admin and User IDs are required to join a room.' });
         }
@@ -63,7 +70,7 @@ io.on('connection', (socket) => {
                 .select('content from to timestamp'); 
 
             socket.join(room); 
-            socket.emit('chatHistory', chatHistory); // Send chat history to the user
+            socket.emit('chatHistory', chatHistory); 
 
             console.log(`User joined room: ${room}`);
         } catch (error) {
@@ -73,7 +80,9 @@ io.on('connection', (socket) => {
     });
 
     
-    socket.on('chatMessage', async ({ message, adminId, userId }) => {
+    socket.on('chatMessage', async (message, adminId, userId) => {
+        // console.log("Message from Client",{message},{adminId},{userId})
+
         if (!message || !adminId || !userId) {
             return socket.emit('error', { message: 'Message, Admin ID, and User ID are required.' });
         }
@@ -93,12 +102,14 @@ io.on('connection', (socket) => {
 
             
             io.to(room).emit('receiveMessage', {
+               
                 id: newMessage._id,
                 content: newMessage.content,
                 from: newMessage.from,
                 to: newMessage.to,
                 timestamp: newMessage.timestamp,
-            });
+            }
+        );
 
             console.log(`Message sent in room ${room}:`, message);
         } catch (error) {
