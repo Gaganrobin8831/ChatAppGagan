@@ -106,7 +106,12 @@ async function handleGetChatAdminLatest(req, res) {
             {
                 $project: {
                     _id: 0,
-                    latestMessage: 1
+                    "latestMessage._id": 1,
+                    "latestMessage.room": 1,
+                    "latestMessage.from": 1,
+                    "latestMessage.to": 1,
+                    "latestMessage.content": 1,
+                    "latestMessage.timestamp": 1
                 }
             }
         ]);
