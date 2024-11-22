@@ -186,7 +186,7 @@ paths:
                               type: string
                             messageContent:
                               type: string
-                            // Include other fields as necessary
+                            # Include other fields as necessary
         '500':
           description: Internal server error
           content:
@@ -344,14 +344,15 @@ paths:
       summary: Logout the user and clear the token in the database.
       description: Logout the user and clear the token in the database.
       responses:
-        200:
+        '200':
           description: Logout successful.
-        404:
+        '404':
           description: User not found.
-        500:
+        '500':
           description: Internal Server Error.
       security:
-        - BearerAuth: []
+        - bearerAuth: []
+
 components:
   securitySchemes:
     bearerAuth:
