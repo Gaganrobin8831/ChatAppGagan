@@ -36,7 +36,7 @@ Follow these steps to set up and run the project locally:
 
 ## Clone the repository:
 ```
-git clone https://github.com/Gaganrobin8831/stripeSubscription02.git
+git clone https://github.com/Gaganrobin8831/ChatAppGagan
 ```
 ## Install dependencies:
 ```
@@ -84,13 +84,13 @@ Follow these steps to import the Postman collection:
 
 **1. Download the Postman Collection:**
 
-The Postman collection file (ChatBot_postman_collection.json) is included in the repository.
+The Postman collection file (ChatApp.postman_collection.json) is included in the repository.
 
 **2. Import the Collection into Postman:**
 
 Open Postman.
 Click on the "Import" button in the top left corner.
-Select the ChatBot_postman_collection.json file from your local machine.
+Select the ChatApp.postman_collection.json file from your local machine.
 Click "Open" to import the collection.
 
 **3. Start Testing:**

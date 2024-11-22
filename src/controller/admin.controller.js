@@ -123,8 +123,8 @@ async function handleAdminDetailEdit(req, res) {
     const { name, email, password, countryCode, contactNumber } = req.body;
     console.log({ name, email, password, countryCode, contactNumber })
     try {
-        const { id } = req.user; 
-        const adminData = await admin.findById(id);  
+        const { id } = req.user;
+        const adminData = await admin.findById(id);
 
         if (!adminData) {
             return new ResponseUtil({
@@ -185,7 +185,6 @@ async function handleAdminDetailEdit(req, res) {
     }
 }
 
-
 async function handleLogout(req, res) {
     try {
         const { id } = req.user;
@@ -198,7 +197,7 @@ async function handleLogout(req, res) {
                 data: null,
                 statusCode: 404,
             }, res)
-            
+
         }
 
         admiData.token = null;
@@ -222,24 +221,24 @@ async function handleLogout(req, res) {
     }
 }
 
-async function handleFullDetailOfAdmin(req,res){
-    const {id} = req.user;
-    try{
+async function handleFullDetailOfAdmin(req, res) {
+    const { id } = req.user;
+    try {
         const adminDetail = await admin.findById(id)
-        if(!adminDetail){
+        if (!adminDetail) {
             return new ResponseUtil({
                 success: false,
-                message:"Do Not Get Detail",
-                data:null,
-                statusCode:404,
-            },res)
+                message: "Do Not Get Detail",
+                data: null,
+                statusCode: 404,
+            }, res)
         }
 
         const AdminData = {
             name: adminDetail.name,
             email: adminDetail.email,
-            PhoneNumber:`${adminDetail.countryCode} ${adminDetail.contactNumber}`,
-            role:adminDetail.role
+            PhoneNumber: `${adminDetail.countryCode} ${adminDetail.contactNumber}`,
+            role: adminDetail.role
         }
 
         return new ResponseUtil({
@@ -247,17 +246,17 @@ async function handleFullDetailOfAdmin(req,res){
             message: "Admin Detail",
             data: AdminData,
             statusCode: 200
-        },res)
+        }, res)
 
 
-    }catch(error){
+    } catch (error) {
         return new ResponseUtil({
             success: false,
-            message:"Internal Server error",
-            data:null,
-            statusCode:500,
-            errors:error.message || error
-        },res)
+            message: "Internal Server error",
+            data: null,
+            statusCode: 500,
+            errors: error.message || error
+        }, res)
     }
 }
 module.exports = {

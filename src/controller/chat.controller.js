@@ -3,7 +3,7 @@ const admin = require('../models/admin.models');
 const ResponseUtil = require('../utility/response.utility');
 
 async function handleGetChatAdmin(req, res) {
-    const { id } = req.user;
+    const { id } = req.user || req.body;
     const { userId } = req.body;
 
     try {
@@ -43,7 +43,7 @@ async function handleGetChatAdmin(req, res) {
 }
 
 async function handleSendMessages(req, res) {
-    const { id } = req.user;
+    const { id } = req.user || req.body;
 
     const { content, userId } = req.body;
 
@@ -74,7 +74,6 @@ async function handleSendMessages(req, res) {
         }, res)
     }
 }
-
 
 module.exports = {
     handleGetChatAdmin,

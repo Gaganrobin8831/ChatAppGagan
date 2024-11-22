@@ -10,7 +10,6 @@ function createToken(admin) {
     }
 
     const token = JWT.sign(payload,secret,{expiresIn:"1d"})
-
     return token
 }
 

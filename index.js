@@ -37,10 +37,10 @@ app.use(express.urlencoded({ extended: true }));
 app.use('/api', adminRouter);
 app.use('/api', chatRouter);
 
-// Connect to MongoDB
+
 connectDB()
     .then(() => {
-        // Start the server
+       
         httpServer.listen(port, () => {
             console.log(`SERVER IS RUNNING ON http://localhost:${port}`);
         });
@@ -53,8 +53,8 @@ function generateRoomId(adminId, userId) {
 
 
 io.on('connection', (socket) => {
-    console.log('A user connected:', socket.id);
-    socket.emit('firstMessage', "Hello How Can I Help You")
+    // console.log('A user connected:', socket.id);
+    socket.emit('firstMessage', "connected")
 
     socket.on('joinRoom', async (adminId, userId) => {
         if (!adminId || !userId) {
@@ -72,7 +72,7 @@ io.on('connection', (socket) => {
             socket.join(room);
             socket.emit('chatHistory', chatHistory);
 
-            console.log(`User joined room: ${room}`);
+            // console.log(`User joined room: ${room}`);
         } catch (error) {
             console.error('Error fetching chat history:', error.message);
             socket.emit('error', { message: 'Failed to fetch chat history.' });
@@ -99,14 +99,20 @@ io.on('connection', (socket) => {
 
             await newMessage.save();
 
-            
-            console.log('Emitting message to room:', room, {
-                id: newMessage._id,
-                content: newMessage.content,
-                from: newMessage.from,
-                to: newMessage.to,
-                timestamp: newMessage.timestamp,
-            });
+            const roomMembers = io.sockets.adapter.rooms.get(room);
+
+            // console.log(`Room Members for room ${room}: ` , roomMembers)
+            if (!roomMembers || !roomMembers.has(socket.id)) {
+                // console.error(`socket ${socket.id} is not part of room ${room}`)
+                return socket.emit('error',{message:"Not Mmeber"})
+            }
+            // console.log('Emitting message to room:', room, {
+            //     id: newMessage._id,
+            //     content: newMessage.content,
+            //     from: newMessage.from,
+            //     to: newMessage.to,
+            //     timestamp: newMessage.timestamp,
+            // });
 
             io.to(room).emit('receiveMessage', {
                 id: newMessage._id,
@@ -117,7 +123,7 @@ io.on('connection', (socket) => {
             });
 
         } catch (error) {
-            console.error('Error saving message:', error);
+            // console.error('Error saving message:', error);
             if (error.name === 'ValidationError') {
                 socket.emit('error', { message: 'Invalid message data.' });
             } else {
@@ -131,7 +137,7 @@ io.on('connection', (socket) => {
     socket.on('leaveRoom', (room) => {
         if (room) {
             socket.leave(room);
-            console.log(`User left room: ${room}`);
+            // console.log(`User left room: ${room}`);
         }
     });
 
@@ -141,7 +147,7 @@ io.on('connection', (socket) => {
     });
 
     socket.on('error', (err) => {
-        console.error('Socket error:', err);
+        // console.error('Socket error:', err);
         socket.emit('error', { message: 'An unexpected error occurred. Please try again later.' });
     });
 

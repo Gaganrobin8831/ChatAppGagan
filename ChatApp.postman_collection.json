@@ -1,0 +1,251 @@
+{
+	"info": {
+		"_postman_id": "35fbaee3-0bb8-4804-8c52-1c92d40b9242",
+		"name": "ChatApp",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "37371656"
+	},
+	"item": [
+		{
+			"name": "Register",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "name",
+							"value": "Gagan2",
+							"type": "text"
+						},
+						{
+							"key": "email",
+							"value": "gagan2@gmail.com",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "123",
+							"type": "text"
+						},
+						{
+							"key": "countryCode",
+							"value": "+91",
+							"type": "text"
+						},
+						{
+							"key": "contactNumber",
+							"value": "6280456258",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:4000/api/register",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "4000",
+					"path": [
+						"api",
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "login",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"email\":\"gagan2@gmail.com\",\r\n    \"password\":\"123\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:4000/api/login",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "4000",
+					"path": [
+						"api",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "editUserdetail",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3M2YxMjg2Njc5M2U4NmFmYmZkZDVjNiIsIm5hbWUiOiJHYWdhbjIiLCJlbWFpbCI6ImdhZ2FuMkBnbWFpbC5jb20iLCJpYXQiOjE3MzIxODY3OTAsImV4cCI6MTczMjI3MzE5MH0.QTmtDXjR30dPagO9kDkdQaA-3A-OLRXq_3ZCQMhSALQ",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "name",
+							"value": "GaganDeep singh",
+							"type": "text"
+						},
+						{
+							"key": "email",
+							"value": "gagan2@gmail.com",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "123",
+							"type": "text"
+						},
+						{
+							"key": "countryCode",
+							"value": "+91",
+							"type": "text"
+						},
+						{
+							"key": "contactNumber",
+							"value": "1234567892",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:4000/api/editadmindetail",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "4000",
+					"path": [
+						"api",
+						"editadmindetail"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getchatdetail",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3M2YxMjg2Njc5M2U4NmFmYmZkZDVjNiIsIm5hbWUiOiJHYWdhbjIiLCJlbWFpbCI6ImdhZ2FuMkBnbWFpbC5jb20iLCJpYXQiOjE3MzIxODY3OTAsImV4cCI6MTczMjI3MzE5MH0.QTmtDXjR30dPagO9kDkdQaA-3A-OLRXq_3ZCQMhSALQ",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"id\":\"5\",\r\n    \"userId\":\"2\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:4000/api/chat",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "4000",
+					"path": [
+						"api",
+						"chat"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Logout",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3M2VjYjMyZmJjNjkyNzA4YTRjZmU1NyIsIm5hbWUiOiJHYWdhbiIsImVtYWlsIjoiZ2FnYW5AZ21haWwuY29tIiwiaWF0IjoxNzMyMTc0NTkxLCJleHAiOjE3MzIyNjA5OTF9.SvvhnskOH5W-05SAFNXfDaULWCaoAB2VOBsL1WBrAWs",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:4000/api/logout",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "4000",
+					"path": [
+						"api",
+						"logout"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "detailAdmin",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3M2YxMjg2Njc5M2U4NmFmYmZkZDVjNiIsIm5hbWUiOiJHYWdhbjIiLCJlbWFpbCI6ImdhZ2FuMkBnbWFpbC5jb20iLCJpYXQiOjE3MzIxODY3OTAsImV4cCI6MTczMjI3MzE5MH0.QTmtDXjR30dPagO9kDkdQaA-3A-OLRXq_3ZCQMhSALQ",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:4000/api/detailAdmin",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "4000",
+					"path": [
+						"api",
+						"detailAdmin"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

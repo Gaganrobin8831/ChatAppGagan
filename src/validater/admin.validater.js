@@ -38,8 +38,6 @@ const validateRegister = (req, res, next) => {
     const { name, email, password, countryCode, contactNumber } = req.body;
     // console.log( { name, email, password, countryCode, contactNumber })
     const requiredFields = { name, email, password, countryCode, contactNumber };
-
-
     for (const [key, value] of Object.entries(requiredFields)) {
         if (!value) {
             return new ResponseUtil({
@@ -59,7 +57,7 @@ const validateRegister = (req, res, next) => {
             statusCode: 400,
         }, res);
     }
-    const phoneRegex = /^[0-9]{10}$/;  
+    const phoneRegex = /^[0-9]{10}$/;
     if (!contactNumber.match(phoneRegex)) {
         return new ResponseUtil({
             success: false,
@@ -68,8 +66,6 @@ const validateRegister = (req, res, next) => {
             statusCode: 400,
         }, res);
     }
-
-
     next();
 };
 
