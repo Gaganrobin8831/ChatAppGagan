@@ -1,7 +1,7 @@
 const socketIO = require('socket.io')
 const { Server } = require('socket.io');
 const Message = require('../models/message.models.js');
-let io;
+let io
 
 const initSocket = (server) => {
  
@@ -15,8 +15,8 @@ const initSocket = (server) => {
     });
     
     
-    function generateRoomId(adminId, userId) {
-        return userId > adminId ? `${userId}-${adminId}` : `${adminId}-${userId}`;
+    function generateRoomId(to, from) {
+        return from > to ? `${from}-${to}` : `${to}-${from}`;
     }
     
     
@@ -24,12 +24,12 @@ const initSocket = (server) => {
         // console.log('A user connected:', socket.id);
         socket.emit('firstMessage', "connected")
     
-        socket.on('joinRoom', async (adminId, userId) => {
-            if (!adminId || !userId) {
+        socket.on('joinRoom', async (to, from) => {
+            if (!to || !from) {
                 return socket.emit('error', { message: 'Admin and User IDs are required to join a room.' });
             }
     
-            const room = generateRoomId(adminId, userId);
+            const room = generateRoomId(to, from);
     
             try {
     
@@ -48,20 +48,20 @@ const initSocket = (server) => {
         });
     
     
-        socket.on('chatMessage', async (message, adminId, userId) => {
+        socket.on('chatMessage', async (message, to, from) => {
             if (!message || typeof message !== 'string' || message.trim() === '') {
                 return socket.emit('error', { message: 'Message must be a non-empty string.' });
             }
-            if (!adminId || !userId || isNaN(adminId) || isNaN(userId)) {
+            if (!to || !from) {
                 return socket.emit('error', { message: 'Valid Admin ID and User ID are required.' });
             }
     
-            const room = generateRoomId(adminId, userId);
+            const room = generateRoomId(to, from);
             try {
                 const newMessage = new Message({
                     room,
-                    from: userId,
-                    to: adminId,
+                    from,
+                    to,
                     content: message,
                 });
     
