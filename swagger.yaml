@@ -149,6 +149,63 @@ paths:
                     type: string
                     example: "Error details here"
 
+  /getLatestChat:
+    get:
+      summary: Get Admin all messages with users
+      description: Get Admin's latest chat rooms and messages with users
+      operationId: handleGetChatAdminLatest
+      responses:
+        '200':
+          description: Chat rooms and messages retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "All chat conversations fetched successfully"
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        latestMessage:
+                          type: object
+                          properties:
+                            _id:
+                              type: string
+                            from:
+                              type: string
+                            to:
+                              type: string
+                            timestamp:
+                              type: string
+                            messageContent:
+                              type: string
+                            // Include other fields as necessary
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "Error fetching chat history"
+                  data:
+                    type: null
+                  errors:
+                    type: string
+                    example: "Error details here"
+
   /editadmindetail:
     put:
       summary: Edit admin details

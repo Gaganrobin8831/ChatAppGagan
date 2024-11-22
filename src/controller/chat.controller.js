@@ -75,7 +75,72 @@ async function handleSendMessages(req, res) {
     }
 }
 
+async function handleGetChatAdminLatest(req, res) {
+    const { id } = req.user || req.body;
+
+    try {
+        const rooms = await Message.aggregate([
+            {
+                $match: {
+                    $or: [
+                        { from: id },
+                        { to: id }
+                    ]
+                }
+            },
+            {
+                $sort: { timestamp: -1 }
+            },
+            {
+                $group: {
+                    _id: {
+                        $cond: [
+                            { $eq: ["$from", id] },
+                            "$to",
+                            "$from"
+                        ]
+                    },
+                    latestMessage: { $first: "$$ROOT" }
+                }
+            },
+            {
+                $project: {
+                    _id: 0,
+                    latestMessage: 1
+                }
+            }
+        ]);
+
+        if (!rooms || rooms.length === 0) {
+            return new ResponseUtil({
+                success: true,
+                message: "No matching rooms found for the admin",
+                data: [],
+                statusCode: 200
+            }, res);
+        }
+
+        return new ResponseUtil({
+            success: true,
+            message: 'All chat conversations fetched successfully',
+            data: rooms,
+            statusCode: 200
+        }, res);
+    } catch (error) {
+        return new ResponseUtil({
+            success: false,
+            message: 'Error fetching chat history',
+            data: [],
+            statusCode: 500,
+            errors: error.message || error,
+        }, res);
+    }
+}
+
+
+
 module.exports = {
     handleGetChatAdmin,
-    handleSendMessages
+    handleSendMessages,
+    handleGetChatAdminLatest
 }
