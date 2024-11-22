@@ -235,6 +235,7 @@ async function handleFullDetailOfAdmin(req, res) {
         }
 
         const AdminData = {
+            id:adminDetail._id,
             name: adminDetail.name,
             email: adminDetail.email,
             PhoneNumber: `${adminDetail.countryCode} ${adminDetail.contactNumber}`,
