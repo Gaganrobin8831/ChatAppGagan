@@ -113,6 +113,9 @@ async function handleGetChatAdminLatest(req, res) {
                     "latestMessage.content": 1,
                     "latestMessage.timestamp": 1
                 }
+            },
+            {
+                $sort: { "latestMessage.timestamp": -1 }  // Finally, sort by timestamp to get the most recent rooms first
             }
         ]);
 

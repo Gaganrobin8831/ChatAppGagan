@@ -106,12 +106,15 @@ const initSocket = (server) => {
             if (room) {
                 socket.leave(room);
                 // console.log(`User left room: ${room}`);
+                io.emit('offline',"Offline")
             }
         });
     
     
         socket.on('disconnect', () => {
             console.log('User disconnected:', socket.id);
+
+           
         });
     
         socket.on('error', (err) => {
