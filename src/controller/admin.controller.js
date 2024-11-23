@@ -96,6 +96,7 @@ async function handleLogin(req, res) {
             token
         }
         adminData.token = token;
+        adminData.status = 1
         await adminData.save();
 
         return new ResponseUtil({
@@ -188,9 +189,9 @@ async function handleAdminDetailEdit(req, res) {
 async function handleLogout(req, res) {
     try {
         const { id } = req.user;
-        const admiData = await admin.findById(id);
+        const adminData = await admin.findById(id);
 
-        if (!admiData) {
+        if (!adminData) {
             return new ResponseUtil({
                 success: false,
                 message: 'User not found',
@@ -200,8 +201,9 @@ async function handleLogout(req, res) {
 
         }
 
-        admiData.token = null;
-        await admiData.save();
+        adminData.token = null;
+        adminData.status = 0
+        await adminData.save();
         return new ResponseUtil({
             success: true,
             message: "Logout successful",

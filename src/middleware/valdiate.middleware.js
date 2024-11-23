@@ -6,7 +6,8 @@ function createToken(admin) {
     const payload = {
         id: admin._id,
         name: admin.name,
-        email: admin.email
+        email: admin.email,
+        status : admin.status
     }
 
     const token = JWT.sign(payload,secret,{expiresIn:"1d"})

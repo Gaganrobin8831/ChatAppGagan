@@ -30,6 +30,10 @@ const adminSchema = new Schema({
         type:String,
         default:null
     },
+    status:{
+        type:String,
+        default:0
+    }
 
 
 },{timestamps:true})
