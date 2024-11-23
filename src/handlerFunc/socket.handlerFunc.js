@@ -17,44 +17,54 @@ const initSocket = (server) => {
         return from > to ? `${from}-${to}` : `${to}-${from}`;
     }
 
-    io.on('connection', (socket) => {
-        console.log('A user connected:', socket.id);
-
-        
-        const token = socket.handshake.query.AuthToken;  
-
+    // Token validation helper function
+    const validateSocketToken = (token, socket) => {
         if (token) {
             const adminPayload = validateToken(token);
             if (!adminPayload) {
-                return socket.emit('error', { message: 'Invalid token' });
+                socket.emit('error', { message: 'Invalid token' });
+                return null;
             }
-
-            
             socket.admin = adminPayload;
-            if(socket.admin.status == "1"){
-                socket.broadcast.emit("getOnline",{adminId:`${socket.admin.id}online`})
-            }
-            console.log("Admin Status:", socket.admin.status);
+            return adminPayload;
         } else {
-            return socket.emit('error', { message: 'Token is required' });
+            socket.emit('error', { message: 'Token is required' });
+            return null;
         }
+    };
 
-        socket.emit('firstMessage', "connected");
+    io.on('connection', (socket) => {
+        console.log('A user connected:', socket.id);
 
+        // Get token from handshake
+        const token = socket.handshake.query.AuthToken;
+        console.log('Received token:', token);
+        
+        // Validate token and handle connection
+        const adminPayload = validateSocketToken(token, socket);
+        if (!adminPayload) return;
+
+        // Broadcast online status if the admin is active
+        if (adminPayload.status === "1") {
+            socket.broadcast.emit("getOnline", { adminId: `${socket.admin.id}online` });
+        }
+        console.log("Admin Status:", socket.admin.status);
+
+        // Join Room event
+    
         socket.on('joinRoom', async (to, from) => {
             if (!to || !from) {
                 return socket.emit('error', { message: 'Admin and User IDs are required to join a room.' });
             }
 
             const room = generateRoomId(to, from);
-
             try {
                 const chatHistory = await Message.find({ room })
                     .sort({ timestamp: 1 })
                     .select('content from to timestamp');
 
                 socket.join(room);
-                socket.emit('chatHistory', chatHistory);
+                socket.emit('chatHisto ry', chatHistory);
 
             } catch (error) {
                 console.error('Error fetching chat history:', error.message);
@@ -62,6 +72,7 @@ const initSocket = (server) => {
             }
         });
 
+        // Chat message event
         socket.on('chatMessage', async (message, to, from) => {
             if (!message || typeof message !== 'string' || message.trim() === '') {
                 return socket.emit('error', { message: 'Message must be a non-empty string.' });
@@ -81,11 +92,13 @@ const initSocket = (server) => {
 
                 await newMessage.save();
 
+                // Ensure the socket is part of the room
                 const roomMembers = io.sockets.adapter.rooms.get(room);
                 if (!roomMembers || !roomMembers.has(socket.id)) {
                     return socket.emit('error', { message: "Not a member of the room" });
                 }
 
+                // Emit the message to the room
                 io.to(room).emit('receiveMessage', {
                     id: newMessage._id,
                     content: newMessage.content,
@@ -100,32 +113,25 @@ const initSocket = (server) => {
             }
         });
 
+        // Leave room event
         socket.on('leaveRoom', (room) => {
             if (room) {
                 socket.leave(room);
-                io.emit('offline', "Offline");
             }
         });
 
+        // Disconnect event
         socket.on('disconnect', () => {
             console.log('User disconnected:', socket.id);
-            if (token) {
-                const adminPayload = validateToken(token);
-                if (!adminPayload) {
-                    return socket.emit('error', { message: 'Invalid token' });
-                }
-    
-                
-                socket.admin = adminPayload;
-                if(socket.admin.status == "0"){
-                    socket.broadcast.emit("getOffline",`${socket.admin.id}online`)
-                }
-                console.log("Admin Status:", socket.admin.status);
-            } else {
-                return socket.emit('error', { message: 'Token is required' });
+
+            // Check admin status on disconnect
+            if (adminPayload && adminPayload.status === "0") {
+                socket.broadcast.emit("getOffline", `${socket.admin.id}offline`);
             }
+            console.log("Admin Status on Disconnect:", socket.admin.status);
         });
 
+        // Generic error event
         socket.on('error', (err) => {
             socket.emit('error', { message: 'An unexpected error occurred. Please try again later.' });
         });
@@ -137,9 +143,9 @@ const getIO = () => {
         throw new Error('Socket.IO not initialized!');
     }
     return io;
-}
+};
 
 module.exports = {
     initSocket,
     getIO
-}
+};

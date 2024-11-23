@@ -5,6 +5,7 @@ const { createServer } = require('http');
 
 const { connectDB } = require('./src/DB/database.DB');
 const { adminRouter } = require('./src/routes/admin.routes');
+const cors = require('cors')
 
 const { chatRouter } = require('./src/routes/chat.routes');
 const swaggerUi = require('swagger-ui-express')
@@ -14,6 +15,13 @@ const app = express();
 const {initSocket} = require('./src/handlerFunc/socket.handlerFunc')
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument))
 const httpServer = createServer(app);
+
+app.use(cors({
+    origin: '*', 
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    allowedHeaders: ['Authorization', 'Content-Type'],
+}));
+
 
 app.use(
     compression({
