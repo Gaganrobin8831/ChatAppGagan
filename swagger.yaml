@@ -9,42 +9,44 @@ servers:
 
 paths:
   /register:
-    post:
-      summary: Register a new admin
-      description: Endpoint to register a new admin.
-      operationId: handleRegister
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Admin'
-      responses:
-        '200':
-          description: Admin registered successfully
+      post:
+        summary: Register a new user.
+        description: Register a new user.
+        requestBody:
+          required: true
           content:
             application/json:
               schema:
                 type: object
                 properties:
-                  success:
-                    type: boolean
-                  message:
+                  name:
                     type: string
-                  data:
-                    $ref: '#/components/schemas/Admin'
-                  statusCode:
-                    type: integer
-        '409':
-          description: Admin already exists
-        '500':
-          description: Internal server error
+                  email:
+                    type: string
+                  password:
+                    type: string
+                  countryCode:
+                    type: string
+                  contactNumber:
+                    type: string
+                required:
+                  - fullName
+                  - emailId
+                  - password
+                  - countryCode
+                  - contactNumber
+        responses:
+          200:
+            description: Registration successful.
+          409:
+            description: User already registered or validation error.
+          500:
+            description: Internal Server Error.
 
   /login:
     post:
-      summary: Admin login
-      description: Endpoint to log an admin in.
-      operationId: handleLogin
+      summary: Authenticate a user and return a token.
+      description: Authenticate a user and return a token.
       requestBody:
         required: true
         content:
@@ -54,32 +56,20 @@ paths:
               properties:
                 email:
                   type: string
-                  format: email
                 password:
                   type: string
               required:
-                - email
+                - emailId
                 - password
       responses:
-        '200':
-          description: Admin logged in successfully
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                  message:
-                    type: string
-                  data:
-                    $ref: '#/components/schemas/Admin'
-                  statusCode:
-                    type: integer
-        '401':
-          description: Invalid email or password
-        '500':
-          description: Internal server error
+        200:
+          description: Login success.
+        400:
+          description: Invalid email or password.
+        409:
+          description: Empty values.
+        500:
+          description: Internal Server Error.
 
   /detailAdmin:
     get:
