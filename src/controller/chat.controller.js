@@ -148,7 +148,7 @@ async function handleGetChatAdminLatest(req, res) {
     const { id } = req.user || req.body;
 
     try {
-        // Fetch the rooms and latest messages for the user
+       
         const rooms = await Message.aggregate([
             {
                 $match: {
@@ -189,7 +189,6 @@ async function handleGetChatAdminLatest(req, res) {
             }
         ]);
 
-        // If no rooms found, return an appropriate response
         if (!rooms || rooms.length === 0) {
             return new ResponseUtil({
                 success: true,
@@ -199,40 +198,36 @@ async function handleGetChatAdminLatest(req, res) {
             }, res);
         }
 
-        // Combine 'from' and 'to' user IDs into a unique set (convert to strings for consistency)
+   
         let adminIds = [
             ...new Set(
                 rooms.flatMap(room => [
-                    String(room.latestMessage.from),  // Convert from to string
-                    String(room.latestMessage.to)     // Convert to to string
+                    String(room.latestMessage.from),  
+                    String(room.latestMessage.to)     
                 ])
             )
         ];
 
-        console.log("adminIds:", adminIds);  // Debugging line to check adminIds
-        console.log("adminIds length:", adminIds.length); // Check the length of adminIds
+        console.log("adminIds:", adminIds);  
+        console.log("adminIds length:", adminIds.length); 
 
-        // Convert adminIds to ObjectId if necessary (since MongoDB uses ObjectId for IDs)
-        const objectIds = adminIds.map(id => mongoose.Types.ObjectId(id)); // Convert string to ObjectId
+        const objectIds = adminIds.map(id => mongoose.Types.ObjectId(id)); 
 
-        // Fetch users from the database
         if (objectIds.length > 0) {
-            const users = await admin.find({ _id: { $in: objectIds } }).select('_id name');  // Corrected query to use User model
+            const users = await admin.find({ _id: { $in: objectIds } }).select('_id name');  
 
-            // Map user IDs to names
             const userMap = users.reduce((acc, user) => {
-                acc[user._id.toString()] = user.name; // Assuming 'name' is the field in your User model
+                acc[user._id.toString()] = user.name;
                 return acc;
             }, {});
 
-            // Replace IDs with names in the response
             const updatedRooms = rooms.map(room => {
                 const { latestMessage } = room;
                 return {
                     latestMessage: {
                         ...latestMessage,
-                        fromName: userMap[latestMessage.from],  // Replace from ID with name
-                        toName: userMap[latestMessage.to]       // Replace to ID with name
+                        fromName: userMap[latestMessage.from],  
+                        toName: userMap[latestMessage.to]       
                     }
                 };
             });
@@ -244,7 +239,6 @@ async function handleGetChatAdminLatest(req, res) {
                 statusCode: 200
             }, res);
         } else {
-            // If condition does not meet, handle this case (optional)
             return new ResponseUtil({
                 success: false,
                 message: 'Not enough users to fetch details for',
