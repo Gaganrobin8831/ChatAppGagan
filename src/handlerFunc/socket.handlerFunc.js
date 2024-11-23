@@ -32,7 +32,7 @@ const initSocket = (server) => {
             
             socket.admin = adminPayload;
             if(socket.admin.status == "1"){
-                socket.broadcast.emit("getOnline",{adminId:socket.admin.id})
+                socket.broadcast.emit("getOnline",{adminId:`${socket.admin.id}online`})
             }
             console.log("Admin Status:", socket.admin.status);
         } else {
@@ -118,7 +118,7 @@ const initSocket = (server) => {
                 
                 socket.admin = adminPayload;
                 if(socket.admin.status == "0"){
-                    socket.broadcast.emit("getOffline",{adminId:socket.admin.id})
+                    socket.broadcast.emit("getOffline",`${socket.admin.id}online`)
                 }
                 console.log("Admin Status:", socket.admin.status);
             } else {
