@@ -8,7 +8,7 @@ servers:
     description: Local development server
 
 paths:
-  /register:
+  /api/register:
       post:
         summary: Register a new user.
         description: Register a new user.
@@ -43,7 +43,7 @@ paths:
           500:
             description: Internal Server Error.
 
-  /login:
+  /api/login:
     post:
       summary: Authenticate a user and return a token.
       description: Authenticate a user and return a token.
@@ -71,7 +71,7 @@ paths:
         500:
           description: Internal Server Error.
 
-  /detailAdmin:
+  /api/detailAdmin:
     get:
       summary: Get Admin Detail
       description: Get detailed information of the admin for the dashboard.
@@ -139,7 +139,7 @@ paths:
                     type: string
                     example: "Error details here"
 
-  /getLatestChat:
+  /api/getLatestChat:
     get:
       summary: Get Admin all messages with users
       description: Get Admin's latest chat rooms and messages with users
@@ -196,7 +196,7 @@ paths:
                     type: string
                     example: "Error details here"
 
-  /editadmindetail:
+  /api/editadmindetail:
     put:
       summary: Edit admin details
       description: Endpoint to update admin's personal details.
@@ -228,7 +228,7 @@ paths:
         '500':
           description: Internal server error
 
-  /chat:
+  /api/chat:
     get:
       summary: Get chat history with admin
       description: Retrieve the chat history between a user and admin.
@@ -329,7 +329,7 @@ paths:
                     type: string
                     example: "Error details here"
 
-  /logout:
+  /api/logout:
     post:
       summary: Logout the user and clear the token in the database.
       description: Logout the user and clear the token in the database.
