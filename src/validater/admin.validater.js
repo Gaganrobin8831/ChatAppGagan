@@ -66,6 +66,18 @@ const validateRegister = (req, res, next) => {
             statusCode: 400,
         }, res);
     }
+
+    const fullNumber = `${countryCode}${contactNumber}`;
+    
+    if (!validator.isMobilePhone(fullNumber, 'any')) {
+        return new ResponseUtil({
+            success: false,
+            message: 'Invalid phone number',
+            data: null,
+            statusCode: 400,
+        }, res);
+    }
+
     next();
 };
 

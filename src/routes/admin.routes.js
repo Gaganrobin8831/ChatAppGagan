@@ -7,22 +7,22 @@ const { handleGetChatAdminLatest } = require('../controller/chat.controller')
 const adminRouter = express.Router()
 
 adminRouter.route('/register')
-.post(validateRegister,handleRegister)
+    .post(validateRegister, handleRegister)
 
 adminRouter.route('/login')
-.post(validateLogin,handleLogin)
+    .post(validateLogin, handleLogin)
 
 adminRouter.route('/detailAdmin')
-.get(checkAuth, handleFullDetailOfAdmin)
+    .get(checkAuth, handleFullDetailOfAdmin)
 
 adminRouter.route('/getLatestChat')
-.get(checkAuth,handleGetChatAdminLatest)
+    .get(checkAuth, handleGetChatAdminLatest)
 
 adminRouter.route('/logout')
-.post(checkAuth,handleLogout)
+    .post(checkAuth, handleLogout)
 
 adminRouter.route('/editadmindetail')
-.put(checkAuth,validateRegister,handleAdminDetailEdit)
+    .put(checkAuth, validateRegister, handleAdminDetailEdit)
 
 module.exports = {
     adminRouter

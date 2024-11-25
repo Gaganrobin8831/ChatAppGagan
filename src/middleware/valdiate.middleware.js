@@ -7,15 +7,15 @@ function createToken(admin) {
         id: admin._id,
         name: admin.name,
         email: admin.email,
-        status : admin.status
+        status: admin.status
     }
 
-    const token = JWT.sign(payload,secret,{expiresIn:"1d"})
+    const token = JWT.sign(payload, secret, { expiresIn: "1d" })
     return token
 }
 
 function validateToken(token) {
-    return JWT.verify(token,secret)
+    return JWT.verify(token, secret)
 }
 
 module.exports = {

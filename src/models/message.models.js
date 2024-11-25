@@ -3,15 +3,15 @@ const mongoose = require('mongoose');
 const MessageSchema = new mongoose.Schema(
     {
         room: {
-            type: String, 
+            type: String,
             required: true,
         },
-        from: {       
-            type: mongoose.Schema.Types.Mixed, 
+        from: {
+            type: mongoose.Schema.Types.Mixed,
             required: true,
         },
         to: {
-            type: mongoose.Schema.Types.Mixed, 
+            type: mongoose.Schema.Types.Mixed,
             required: true,
         },
         content: {

@@ -17,27 +17,27 @@ const adminSchema = new Schema({
         required: true
     },
     contactNumber: {
-        type:String
-      },
+        type: String
+    },
     countryCode: {
-        type:String
-      },
+        type: String
+    },
     role: {
         type: String,
         default: 'admin'
     },
-    token:{
-        type:String,
-        default:null
+    token: {
+        type: String,
+        default: null
     },
-    status:{
-        type:String,
-        default:0
+    status: {
+        type: String,
+        default: 0
     }
 
 
-},{timestamps:true})
+}, { timestamps: true })
 adminSchema.index({ email: 1 });
-const admin = mongoose.model("admin",adminSchema)
+const admin = mongoose.model("admin", adminSchema)
 
 module.exports = admin

@@ -49,7 +49,7 @@ const initSocket = (server) => {
         adminDetail.status = true
         await adminDetail.save()
 
-        socket.broadcast.emit("getOnline", { adminId: socket.admin.id,statuts:adminDetail.status });
+        socket.broadcast.emit("getOnline", { adminId: socket.admin.id, statuts: adminDetail.status });
         // io.emit("getOnline", { adminId: `${socket.admin.id} online`,statuts:adminDetail.status});
 
         socket.on('joinRoom', async (to, from) => {

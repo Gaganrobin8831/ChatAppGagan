@@ -132,8 +132,8 @@ async function handleGetChatAdminLatest(req, res) {
         let adminIds = [
             ...new Set(
                 rooms.flatMap(room => [
-                    String(room.latestMessage.from),  
-                    String(room.latestMessage.to)     
+                    String(room.latestMessage.from),
+                    String(room.latestMessage.to)
                 ])
             )
         ];
@@ -142,33 +142,33 @@ async function handleGetChatAdminLatest(req, res) {
 
         // Convert admin IDs to ObjectIds
         const objectIds = adminIds.map(id => {
-            if (id.length === 24) {  
+            if (id.length === 24) {
                 return new mongoose.Types.ObjectId(id);
             }
-            return null;  
-        }).filter(Boolean);  
+            return null;
+        }).filter(Boolean);
 
-        console.log('Converted Object IDs:', objectIds);  
+        console.log('Converted Object IDs:', objectIds);
 
         if (objectIds.length > 0) {
-            
+
             const users = await admin.find({ _id: { $in: objectIds } }).select('_id name');
 
-         
+
             const userMap = users.reduce((acc, user) => {
                 acc[user._id.toString()] = user.name;
                 return acc;
             }, {});
 
-           
+
             const updatedRooms = rooms.map(room => {
                 const { latestMessage } = room;
 
-              
+
                 const isFromAdmin = userMap[latestMessage.from];
                 const isToAdmin = userMap[latestMessage.to]
 
-              
+
                 let adminField = null;
                 if (isFromAdmin) {
                     adminField = 'from';
@@ -176,13 +176,13 @@ async function handleGetChatAdminLatest(req, res) {
                     adminField = 'to';
                 }
 
-              
+
                 return {
                     latestMessage: {
                         ...latestMessage,
                         fromName: userMap[latestMessage.from],
                         toName: userMap[latestMessage.to],
-                        adminField: adminField,  
+                        adminField: adminField,
                         adminId: isFromAdmin ? latestMessage.from : (isToAdmin ? latestMessage.to : null) // Store admin ID
                     }
                 };
