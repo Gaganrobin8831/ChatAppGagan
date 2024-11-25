@@ -45,7 +45,7 @@ async function handleRegister(req, res) {
 
         return new ResponseUtil({
             success: true,
-            message: 'admin Registered Successfully',
+            message: 'Admin Registered Successfully',
             data: null,
             statusCode: 200,
         }, res);
