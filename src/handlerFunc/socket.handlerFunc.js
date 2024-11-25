@@ -2,6 +2,7 @@ const socketIO = require('socket.io');
 const { Server } = require('socket.io');
 const Message = require('../models/message.models.js');
 const { validateToken } = require('../middleware/valdiate.middleware.js');
+const admin = require('../models/admin.models.js');
 let io;
 
 const initSocket = (server) => {
@@ -33,29 +34,23 @@ const initSocket = (server) => {
         }
     };
 
-    io.on('connection', (socket) => {
+    io.on('connection', async (socket) => {
         console.log('A user connected:', socket.id);
-        // console.log(socket);
 
-        // Get token from handshake
         const token = socket.handshake.headers.auth;
-        // console.log('Received token:', token);
 
-        // Validate token and handle connection
         const adminPayload = validateSocketToken(token, socket);
-        // console.log(adminPayload);
+
 
         if (!adminPayload) return;
 
-        // Broadcast online status if the admin is active
-        if (adminPayload.status === '1') {
-            socket.broadcast.emit("getOnline", { adminId: `${socket.admin.id} online` });
-            console.log(socket.admin.id);
+        const adminDetail = await admin.findOne({ email: adminPayload.email });
+        if (!adminDetail) return;
+        adminDetail.status = true
+        await adminDetail.save()
 
-        }
-        console.log("Admin Status:", socket.admin.status);
-
-        // Join Room event
+        socket.broadcast.emit("getOnline", { adminId: socket.admin.id,statuts:adminDetail.status });
+        // io.emit("getOnline", { adminId: `${socket.admin.id} online`,statuts:adminDetail.status});
 
         socket.on('joinRoom', async (to, from) => {
             if (!to || !from) {
@@ -77,7 +72,7 @@ const initSocket = (server) => {
             }
         });
 
-        // Chat message event
+
         socket.on('chatMessage', async (message, to, from) => {
             if (!message || typeof message !== 'string' || message.trim() === '') {
                 return socket.emit('error', { message: 'Message must be a non-empty string.' });
@@ -97,13 +92,13 @@ const initSocket = (server) => {
 
                 await newMessage.save();
 
-                // Ensure the socket is part of the room
+
                 const roomMembers = io.sockets.adapter.rooms.get(room);
                 if (!roomMembers || !roomMembers.has(socket.id)) {
                     return socket.emit('error', { message: "Not a member of the room" });
                 }
 
-                // Emit the message to the room
+
                 io.to(room).emit('receiveMessage', {
                     id: newMessage._id,
                     content: newMessage.content,
@@ -118,23 +113,21 @@ const initSocket = (server) => {
             }
         });
 
-        // Leave room event
+
         socket.on('leaveRoom', (room) => {
             if (room) {
                 socket.leave(room);
             }
         });
 
-        // Disconnect event
-        socket.on('disconnect', () => {
+
+        socket.on('disconnect', async () => {
             console.log('User disconnected:', socket.id);
-
-            // Check admin status on disconnect
-
-            socket.broadcast.emit("getOffline", `${socket.admin.id} offline`);
-
-            console.log("Admin Status on Disconnect:", socket.admin.status);
-            console.log(socket.admin.id);
+            const adminDetail = await admin.findOne({ email: adminPayload.email });
+            if (!adminDetail) return;
+            adminDetail.status = false
+            await adminDetail.save()
+            socket.broadcast.emit("getOffline", { adminId: socket.admin.id, status: adminDetail.status });
         });
 
         // Generic error event

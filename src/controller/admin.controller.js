@@ -96,7 +96,7 @@ async function handleLogin(req, res) {
             token
         }
         adminData.token = token;
-        adminData.status = 1
+        adminData.status = true
         await adminData.save();
 
         return new ResponseUtil({
@@ -202,7 +202,7 @@ async function handleLogout(req, res) {
         }
 
         adminData.token = null;
-        adminData.status = 0
+        adminData.status = false
         await adminData.save();
         return new ResponseUtil({
             success: true,
