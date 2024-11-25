@@ -138,7 +138,7 @@ async function handleGetChatAdminLatest(req, res) {
             )
         ];
 
-        console.log('Extracted Admin IDs:', adminIds);
+        // console.log('Extracted Admin IDs:', adminIds);
 
         // Convert admin IDs to ObjectIds
         const objectIds = adminIds.map(id => {
@@ -148,12 +148,11 @@ async function handleGetChatAdminLatest(req, res) {
             return null;
         }).filter(Boolean);
 
-        console.log('Converted Object IDs:', objectIds);
+        // console.log('Converted Object IDs:', objectIds);
 
         if (objectIds.length > 0) {
 
             const users = await admin.find({ _id: { $in: objectIds } }).select('_id name');
-
 
             const userMap = users.reduce((acc, user) => {
                 acc[user._id.toString()] = user.name;
@@ -164,10 +163,8 @@ async function handleGetChatAdminLatest(req, res) {
             const updatedRooms = rooms.map(room => {
                 const { latestMessage } = room;
 
-
                 const isFromAdmin = userMap[latestMessage.from];
                 const isToAdmin = userMap[latestMessage.to]
-
 
                 let adminField = null;
                 if (isFromAdmin) {
@@ -175,7 +172,6 @@ async function handleGetChatAdminLatest(req, res) {
                 } else if (isToAdmin) {
                     adminField = 'to';
                 }
-
 
                 return {
                     latestMessage: {
