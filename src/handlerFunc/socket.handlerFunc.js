@@ -64,7 +64,7 @@ const initSocket = (server) => {
                     .select('content from to timestamp');
 
                 socket.join(room);
-                socket.emit('chatHisto ry', chatHistory);
+                socket.emit('chatHistory', chatHistory);
 
             } catch (error) {
                 console.error('Error fetching chat history:', error.message);
