@@ -78,6 +78,7 @@ async function handleSendMessages(req, res) {
 
 async function handleGetChatAdminLatest(req, res) {
     const { id } = req.user || req.body;
+    const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
     try {
       
@@ -98,7 +99,13 @@ async function handleGetChatAdminLatest(req, res) {
                     "latestMessage.from": 1,
                     "latestMessage.to": 1,
                     "latestMessage.content": 1,
-                    "latestMessage.timestamp": 1
+                    "latestMessage.timestamp": {
+                        $dateToString: {
+                            format: "%Y-%m-%dT%H:%M:%S.%L", 
+                            date: { $toDate: "$latestMessage.timestamp" }, 
+                            timezone: timezone 
+                        }
+                    }
                 }
             },
             { $sort: { "latestMessage.timestamp": -1 } }
