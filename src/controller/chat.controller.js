@@ -80,27 +80,13 @@ async function handleGetChatAdminLatest(req, res) {
     const { id } = req.user || req.body;
 
     try {
+      
         const rooms = await Message.aggregate([
-            {
-                $match: {
-                    $or: [
-                        { from: id },
-                        { to: id }
-                    ]
-                }
-            },
-            {
-                $sort: { timestamp: -1 }
-            },
+            { $match: { $or: [{ from: id }, { to: id }] } },
+            { $sort: { timestamp: -1 } },
             {
                 $group: {
-                    _id: {
-                        $cond: [
-                            { $eq: ["$from", id] },
-                            "$to",
-                            "$from"
-                        ]
-                    },
+                    _id: { $cond: [{ $eq: ["$from", id] }, "$to", "$from"] },
                     latestMessage: { $first: "$$ROOT" }
                 }
             },
@@ -115,9 +101,7 @@ async function handleGetChatAdminLatest(req, res) {
                     "latestMessage.timestamp": 1
                 }
             },
-            {
-                $sort: { "latestMessage.timestamp": -1 }
-            }
+            { $sort: { "latestMessage.timestamp": -1 } }
         ]);
 
         if (!rooms || rooms.length === 0) {
@@ -129,75 +113,56 @@ async function handleGetChatAdminLatest(req, res) {
             }, res);
         }
 
-        let adminIds = [
-            ...new Set(
-                rooms.flatMap(room => [
-                    String(room.latestMessage.from),
-                    String(room.latestMessage.to)
-                ])
-            )
+      
+        const adminIds = [
+            ...new Set(rooms.flatMap(room => [String(room.latestMessage.from), String(room.latestMessage.to)]))
         ];
 
-        // console.log('Extracted Admin IDs:', adminIds);
-
-        // Convert admin IDs to ObjectIds
+       
         const objectIds = adminIds.map(id => {
             if (id.length === 24) {
-                return new mongoose.Types.ObjectId(id);
+                return new mongoose.Types.ObjectId(id); 
             }
-            return null;
-        }).filter(Boolean);
+            return null; 
+        }).filter(Boolean); 
 
-        // console.log('Converted Object IDs:', objectIds);
-
-        if (objectIds.length > 0) {
-
-            const users = await admin.find({ _id: { $in: objectIds } }).select('_id name');
-
-            const userMap = users.reduce((acc, user) => {
-                acc[user._id.toString()] = user.name;
-                return acc;
-            }, {});
-
-
-            const updatedRooms = rooms.map(room => {
-                const { latestMessage } = room;
-
-                const isFromAdmin = userMap[latestMessage.from];
-                const isToAdmin = userMap[latestMessage.to]
-
-                let adminField = null;
-                if (isFromAdmin) {
-                    adminField = 'from';
-                } else if (isToAdmin) {
-                    adminField = 'to';
-                }
-
-                return {
-                    latestMessage: {
-                        ...latestMessage,
-                        fromName: userMap[latestMessage.from],
-                        toName: userMap[latestMessage.to],
-                        adminField: adminField,
-                        adminId: isFromAdmin ? latestMessage.from : (isToAdmin ? latestMessage.to : null) // Store admin ID
-                    }
-                };
-            });
-
-            return new ResponseUtil({
-                success: true,
-                message: 'All chat conversations fetched successfully',
-                data: updatedRooms,
-                statusCode: 200
-            }, res);
-        } else {
+        if (objectIds.length === 0) {
             return new ResponseUtil({
                 success: false,
-                message: 'Not enough users to fetch details for',
+                message: 'No valid admin IDs to fetch users for',
                 data: [],
                 statusCode: 400
             }, res);
         }
+
+        const users = await admin.find({ _id: { $in: objectIds } }).select('_id name');
+        const userMap = Object.fromEntries(users.map(user => [user._id.toString(), user.name]));
+
+        const updatedRooms = rooms.map(room => {
+            const { latestMessage } = room;
+            const fromName = userMap[latestMessage.from];
+            const toName = userMap[latestMessage.to];
+
+            const adminField = fromName ? 'from' : (toName ? 'to' : null);
+            const adminId = fromName ? latestMessage.from : (toName ? latestMessage.to : null);
+
+            return {
+                latestMessage: {
+                    ...latestMessage,
+                    fromName,
+                    toName,
+                    adminField,
+                    adminId
+                }
+            };
+        });
+
+        return new ResponseUtil({
+            success: true,
+            message: 'All chat conversations fetched successfully',
+            data: updatedRooms,
+            statusCode: 200
+        }, res);
 
     } catch (error) {
         return new ResponseUtil({
