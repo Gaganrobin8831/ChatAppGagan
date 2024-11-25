@@ -35,23 +35,28 @@ const initSocket = (server) => {
 
     io.on('connection', (socket) => {
         console.log('A user connected:', socket.id);
+        // console.log(socket);
 
         // Get token from handshake
-        const token = socket.handshake.query.AuthToken;
-        console.log('Received token:', token);
-        
+        const token = socket.handshake.headers.auth;
+        // console.log('Received token:', token);
+
         // Validate token and handle connection
         const adminPayload = validateSocketToken(token, socket);
+        // console.log(adminPayload);
+
         if (!adminPayload) return;
 
         // Broadcast online status if the admin is active
-        if (adminPayload.status === "1") {
-            socket.broadcast.emit("getOnline", { adminId: `${socket.admin.id}online` });
+        if (adminPayload.status === '1') {
+            socket.broadcast.emit("getOnline", { adminId: `${socket.admin.id} online` });
+            console.log(socket.admin.id);
+
         }
         console.log("Admin Status:", socket.admin.status);
 
         // Join Room event
-    
+
         socket.on('joinRoom', async (to, from) => {
             if (!to || !from) {
                 return socket.emit('error', { message: 'Admin and User IDs are required to join a room.' });
@@ -125,10 +130,11 @@ const initSocket = (server) => {
             console.log('User disconnected:', socket.id);
 
             // Check admin status on disconnect
-            if (adminPayload && adminPayload.status === "0") {
-                socket.broadcast.emit("getOffline", `${socket.admin.id}offline`);
-            }
+
+            socket.broadcast.emit("getOffline", `${socket.admin.id} offline`);
+
             console.log("Admin Status on Disconnect:", socket.admin.status);
+            console.log(socket.admin.id);
         });
 
         // Generic error event
