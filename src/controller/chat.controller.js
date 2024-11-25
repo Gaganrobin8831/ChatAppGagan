@@ -99,6 +99,7 @@ async function handleGetChatAdminLatest(req, res) {
                     "latestMessage.from": 1,
                     "latestMessage.to": 1,
                     "latestMessage.content": 1,
+                    "latestMessage.type":1,
                     "latestMessage.timestamp": {
                         $dateToString: {
                             format: "%Y-%m-%dT%H:%M:%S.%L", 
@@ -120,54 +121,12 @@ async function handleGetChatAdminLatest(req, res) {
             }, res);
         }
 
-      
-        const adminIds = [
-            ...new Set(rooms.flatMap(room => [String(room.latestMessage.from), String(room.latestMessage.to)]))
-        ];
-
-       
-        const objectIds = adminIds.map(id => {
-            if (id.length === 24) {
-                return new mongoose.Types.ObjectId(id); 
-            }
-            return null; 
-        }).filter(Boolean); 
-
-        if (objectIds.length === 0) {
-            return new ResponseUtil({
-                success: false,
-                message: 'No valid admin IDs to fetch users for',
-                data: [],
-                statusCode: 400
-            }, res);
-        }
-
-        const users = await admin.find({ _id: { $in: objectIds } }).select('_id name');
-        const userMap = Object.fromEntries(users.map(user => [user._id.toString(), user.name]));
-
-        const updatedRooms = rooms.map(room => {
-            const { latestMessage } = room;
-            const fromName = userMap[latestMessage.from];
-            const toName = userMap[latestMessage.to];
-
-            const adminField = fromName ? 'from' : (toName ? 'to' : null);
-            const adminId = fromName ? latestMessage.from : (toName ? latestMessage.to : null);
-
-            return {
-                latestMessage: {
-                    ...latestMessage,
-                    fromName,
-                    toName,
-                    adminField,
-                    adminId
-                }
-            };
-        });
+     
 
         return new ResponseUtil({
             success: true,
             message: 'All chat conversations fetched successfully',
-            data: updatedRooms,
+            data: rooms,
             statusCode: 200
         }, res);
 

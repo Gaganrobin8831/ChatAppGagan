@@ -14,6 +14,12 @@ const MessageSchema = new mongoose.Schema(
             type: mongoose.Schema.Types.Mixed,
             required: true,
         },
+        type:{
+            type: String,
+            required: true,
+            enum:["user","admin"],
+            default:"user"
+        },
         content: {
             type: String,
             required: true,

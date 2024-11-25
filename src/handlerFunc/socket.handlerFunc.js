@@ -1,4 +1,5 @@
 const socketIO = require('socket.io');
+const mongoose = require('mongoose')
 const { Server } = require('socket.io');
 const Message = require('../models/message.models.js');
 const { validateToken } = require('../middleware/valdiate.middleware.js');
@@ -50,7 +51,7 @@ const initSocket = (server) => {
         await adminDetail.save()
 
         // socket.broadcast.emit("getOnline", { adminId: socket.admin.id, statuts: adminDetail.status });
-        io.emit("getOnline", { adminId: `${socket.admin.id} online`,statuts:adminDetail.status});
+        io.emit("getOnline", { adminId: `${socket.admin.id} online`, statuts: adminDetail.status });
 
         socket.on('joinRoom', async (to, from) => {
             if (!to || !from) {
@@ -74,28 +75,68 @@ const initSocket = (server) => {
 
 
         socket.on('chatMessage', async (message, to, from) => {
+
             if (!message || typeof message !== 'string' || message.trim() === '') {
                 return socket.emit('error', { message: 'Message must be a non-empty string.' });
             }
+
+
             if (!to || !from) {
                 return socket.emit('error', { message: 'Valid Admin ID and User ID are required.' });
             }
 
+
+            const isObjectId = (id) => {
+                return mongoose.Types.ObjectId.isValid(id);
+            }
+
+
+
+            const isFromObjectId = isObjectId(from);
+            console.log(isFromObjectId);
+
+
+            // if (!isFromObjectId) {
+            //     return socket.emit('error', { message: 'Invalid input, either "to" or "from" must be a valid ObjectId.' });
+            // }
+
+
+            let adminId;
+            let messageType = 'user';
+
+            if (isFromObjectId == true) {
+                adminId = from;
+                messageType = 'admin';
+                console.log({ isFromObjectId });
+
+            } else {
+                adminId = from;
+                messageType = 'user';
+                console.log({ isFromObjectId });
+            }
+            let adminDetail
+            if (isFromObjectId == true) {
+                adminDetail = await admin.findOne({ _id: adminId });
+            } 
             const room = generateRoomId(to, from);
+
             try {
+
                 const newMessage = new Message({
                     room,
                     from,
                     to,
                     content: message,
+                    type: messageType,
                 });
+
 
                 await newMessage.save();
 
 
                 const roomMembers = io.sockets.adapter.rooms.get(room);
                 if (!roomMembers || !roomMembers.has(socket.id)) {
-                    return socket.emit('error', { message: "Not a member of the room" });
+                    return socket.emit('error', { message: 'Not a member of the room' });
                 }
 
 
@@ -112,7 +153,6 @@ const initSocket = (server) => {
                 socket.emit('error', { message: 'Failed to save message. Please try again later.' });
             }
         });
-
 
         socket.on('leaveRoom', (room) => {
             if (room) {
