@@ -9,13 +9,13 @@ async function handleGetChatAdmin(req, res) {
 
     try {
         const room = userId > id ? `${userId}-${id}` : `${id}-${userId}`;
-        console.log(room)
+        // console.log(room)
 
         const chatHistory = await Message.find({ room })
             .sort({ timestamp: 1 })
             .populate('from', 'name email')
             .populate('to', 'name email');
-        console.log({ chatHistory })
+        // console.log({ chatHistory })
         if (!chatHistory.length) {
             return new ResponseUtil({
                 success: false,
