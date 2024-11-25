@@ -35,8 +35,8 @@ const initSocket = (server) => {
     };
 
     io.on('connection', async (socket) => {
-        console.log('A user connected:', socket.id);
-
+        // console.log('A user connected:', socket.id);
+        // console.log(socket)
         const token = socket.handshake.headers.auth;
 
         const adminPayload = validateSocketToken(token, socket);
@@ -49,8 +49,8 @@ const initSocket = (server) => {
         adminDetail.status = true
         await adminDetail.save()
 
-        socket.broadcast.emit("getOnline", { adminId: socket.admin.id, statuts: adminDetail.status });
-        // io.emit("getOnline", { adminId: `${socket.admin.id} online`,statuts:adminDetail.status});
+        // socket.broadcast.emit("getOnline", { adminId: socket.admin.id, statuts: adminDetail.status });
+        io.emit("getOnline", { adminId: `${socket.admin.id} online`,statuts:adminDetail.status});
 
         socket.on('joinRoom', async (to, from) => {
             if (!to || !from) {
@@ -127,7 +127,7 @@ const initSocket = (server) => {
             if (!adminDetail) return;
             adminDetail.status = false
             await adminDetail.save()
-            socket.broadcast.emit("getOffline", { adminId: socket.admin.id, status: adminDetail.status });
+            io.emit("getOffline", { adminId: socket.admin.id, status: adminDetail.status });
         });
 
         // Generic error event

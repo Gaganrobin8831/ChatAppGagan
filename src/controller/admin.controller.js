@@ -119,10 +119,10 @@ async function handleLogin(req, res) {
 }
 
 async function handleAdminDetailEdit(req, res) {
-    console.log('Authenticated admin:', req.user);
+    // console.log('Authenticated admin:', req.user);
 
     const { name, email, password, countryCode, contactNumber } = req.body;
-    console.log({ name, email, password, countryCode, contactNumber })
+    // console.log({ name, email, password, countryCode, contactNumber })
     try {
         const { id } = req.user;
         const adminData = await admin.findById(id);
