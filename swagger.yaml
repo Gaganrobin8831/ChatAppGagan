@@ -202,7 +202,20 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Admin'
+                type: object
+                properties:
+                  name:
+                    type: string
+                  email:
+                    type: string
+                  password:
+                    type: string
+                required:
+                  - fullName
+                  - emailId
+                  - password
+                  - countryCode
+                  - contactNumber
       responses:
         '200':
           description: Admin details updated successfully
