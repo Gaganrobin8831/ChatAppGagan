@@ -90,9 +90,9 @@ async function handleLogin(req, res) {
         const token = createToken(adminData)
 
         const responseadminData = {
-            Name: adminData.name,
-            Email: adminData.email,
-            Role: adminData.role,
+            name: adminData.name,
+            email: adminData.email,
+            role: adminData.role,
             token
         }
         adminData.token = token;
