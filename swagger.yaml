@@ -25,10 +25,6 @@ paths:
                     type: string
                   password:
                     type: string
-                  countryCode:
-                    type: string
-                  contactNumber:
-                    type: string
                 required:
                   - fullName
                   - emailId
