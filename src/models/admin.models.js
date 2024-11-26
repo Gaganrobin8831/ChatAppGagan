@@ -16,12 +16,12 @@ const adminSchema = new Schema({
         type: String,
         required: true
     },
-    contactNumber: {
-        type: String
-    },
-    countryCode: {
-        type: String
-    },
+    // contactNumber: {
+    //     type: String
+    // },
+    // countryCode: {
+    //     type: String
+    // },
     role: {
         type: String,
         default: 'admin'

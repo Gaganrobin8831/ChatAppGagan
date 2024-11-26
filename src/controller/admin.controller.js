@@ -7,7 +7,7 @@ async function handleRegister(req, res) {
     // console.log('Body:', req.body);
     // console.log('File:', req.file);
 
-    const { name, email, password, countryCode, contactNumber } = req.body;
+    const { name, email, password } = req.body;
 
     try {
         const [existingadmin, hashPassword] = await Promise.all([
@@ -33,8 +33,8 @@ async function handleRegister(req, res) {
             name,
             email,
             password: hashPassword,
-            countryCode,
-            contactNumber,
+            // countryCode,
+            // contactNumber,
 
         });
 
@@ -121,7 +121,7 @@ async function handleLogin(req, res) {
 async function handleAdminDetailEdit(req, res) {
     // console.log('Authenticated admin:', req.user);
 
-    const { name, email, password, countryCode, contactNumber } = req.body;
+    const { name, email, password } = req.body;
     // console.log({ name, email, password, countryCode, contactNumber })
     try {
         const { id } = req.user;
@@ -138,8 +138,7 @@ async function handleAdminDetailEdit(req, res) {
 
         const updatedData = {
             name: name || adminData.name,
-            countryCode: countryCode || adminData.countryCode,
-            contactNumber: contactNumber || adminData.contactNumber,
+          
         };
 
         if (email !== adminData.email) {
@@ -240,7 +239,7 @@ async function handleFullDetailOfAdmin(req, res) {
             id:adminDetail._id,
             name: adminDetail.name,
             email: adminDetail.email,
-            PhoneNumber: `${adminDetail.countryCode} ${adminDetail.contactNumber}`,
+            // PhoneNumber: `${adminDetail.countryCode} ${adminDetail.contactNumber}`,
             role: adminDetail.role
         }
 

@@ -35,9 +35,9 @@ const validateLogin = (req, res, next) => {
 
 
 const validateRegister = (req, res, next) => {
-    const { name, email, password, countryCode, contactNumber } = req.body;
+    const { name, email, password, countryCode } = req.body;
     // console.log( { name, email, password, countryCode, contactNumber })
-    const requiredFields = { name, email, password, countryCode, contactNumber };
+    const requiredFields = { name, email, password, countryCode };
     for (const [key, value] of Object.entries(requiredFields)) {
         if (!value) {
             return new ResponseUtil({
@@ -57,26 +57,26 @@ const validateRegister = (req, res, next) => {
             statusCode: 400,
         }, res);
     }
-    const phoneRegex = /^[0-9]{10}$/;
-    if (!contactNumber.match(phoneRegex)) {
-        return new ResponseUtil({
-            success: false,
-            message: 'Invalid phone number format',
-            data: null,
-            statusCode: 400,
-        }, res);
-    }
+    // const phoneRegex = /^[0-9]{10}$/;
+    // if (!contactNumber.match(phoneRegex)) {
+    //     return new ResponseUtil({
+    //         success: false,
+    //         message: 'Invalid phone number format',
+    //         data: null,
+    //         statusCode: 400,
+    //     }, res);
+    // }
 
-    const fullNumber = `${countryCode}${contactNumber}`;
+    // const fullNumber = `${countryCode}${contactNumber}`;
     
-    if (!validator.isMobilePhone(fullNumber, 'any')) {
-        return new ResponseUtil({
-            success: false,
-            message: 'Invalid phone number',
-            data: null,
-            statusCode: 400,
-        }, res);
-    }
+    // if (!validator.isMobilePhone(fullNumber, 'any')) {
+    //     return new ResponseUtil({
+    //         success: false,
+    //         message: 'Invalid phone number',
+    //         data: null,
+    //         statusCode: 400,
+    //     }, res);
+    // }
 
     next();
 };
